@@ -20,7 +20,7 @@ pipeline {
 
     stage('Docker Build') {
       steps {
-        sh '''
+        sh '''#!/bin/bash
           echo "Setting up Docker env from Minikube..."
           eval $(minikube docker-env)
           docker build -t $DOCKER_IMAGE .
@@ -31,6 +31,25 @@ pipeline {
     stage('Docker Push') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-          sh '''
+          sh '''#!/bin/bash
             echo "$PASS" | docker login -u "$USER" --password-stdin
-            docker
+            docker push $DOCKER_IMAGE
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Cleaning up workspace..."
+      deleteDir()
+    }
+    success {
+      echo "Pipeline completed successfully!"
+    }
+    failure {
+      echo "Pipeline failed. Check the logs above."
+    }
+  }
+}
