@@ -6,41 +6,36 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git url: 'https://github.com/snakka-ops/java-app.git', credentialsId: 'github-token'
+        git 'https://github.com/snakka-ops/java-app.git'  // Public repo, no creds needed
       }
     }
     stage('Build') {
       steps {
-        sh 'mvn clean package'
-      }
-    }
-    stage('Scan') {
-      steps {
-        echo 'Code scan placeholder (add SonarQube setup later)'
+        sh 'mvn clean package'  // Build Java app using Maven
       }
     }
     stage('Docker Build') {
       steps {
-        sh """
-          eval \$(minikube docker-env)
+        sh '''
+          eval $(minikube docker-env)
           docker build -t $DOCKER_IMAGE .
-        """
+        '''
       }
     }
     stage('Docker Push') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'docker-creds', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
-          sh """
+          sh '''
             echo $PASS | docker login -u $USER --password-stdin
             docker push $DOCKER_IMAGE
-          """
+          '''
         }
       }
     }
   }
   post {
     always {
-      cleanWs() // Make sure the Workspace Cleanup plugin is installed!
+      deleteDir()  // Clean workspace (built-in, no plugin needed)
     }
   }
 }
