@@ -1,23 +1,20 @@
 pipeline {
-    agent { label 'master' }  // Run only on master node
-    
+    agent { label 'master' }
+
     tools {
-        // Replace 'Maven 3.x' and 'JDK 11' with your actual tool names configured in Jenkins
-        maven 'Maven 3.x'   
-        jdk 'JDK 11'
+        maven 'Maven 3.8.6'   // exact name from Jenkins config
+        jdk 'Java 11'         // exact name from Jenkins config
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Git checkout (no credentials in this example)
                 git url: 'https://github.com/snakka-ops/java-app.git', branch: 'master'
             }
         }
 
         stage('Build') {
             steps {
-                // Run Maven build; Jenkins will set JAVA_HOME and PATH automatically based on tools{} block
                 bat 'mvn clean compile'
             }
         }
