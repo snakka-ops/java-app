@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/your-username/java-app.git'
+                git 'https://github.com/snakka-ops/java-app.git'
             }
         }
 
