@@ -1,4 +1,4 @@
-FROM maven:3.8.7-eclipse-temurin-17 as builder
+FROM maven:3.8.7-eclipse-temurin-17 as builder 
 WORKDIR /app
 COPY . .
 RUN mvn package
